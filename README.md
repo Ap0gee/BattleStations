@@ -139,13 +139,13 @@ Sets the given radio(s) to the default station (Current Zone Music). Below are s
 
 Sets the given radio(s) to the original game music. Below are some useage examples of this command:
 
-	//bs default
-    //bs d
+	//bs normal
+    //bs n
    	
-    //bs d solo
-    //bs d party
+    //bs n solo
+    //bs n party
     
-* _**[radio]:**_ Optional parameter used to specify which radio to set the default station to. If no radio type is present, both radios will be set to the default station.
+* _**[radio]:**_ Optional parameter used to specify which radio to set the normal station to. If no radio type is present, both radios will be set to the normal station.
 
 **reload**
 
