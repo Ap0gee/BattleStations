@@ -34,7 +34,8 @@ _addon.commands = {'battlestations', 'stations', 'bs'}
 local _logger = require('logger')
 local _config  = require('config')
 local _packets = require('packets')
-
+require('logger')
+require('functions')
 require('constants')
 require('helpers')
 
@@ -233,15 +234,8 @@ function injectBattleMusic()
     
     _packets.inject(_packets.new('incoming', packets.inbound.music_change.id, {
         ['BGM Type'] = music_type,
-        ['Song ID'] = song,
+        ['Song ID'] = song
     }))
-end
-
-function handleInjectionNeeds() 
-	if needs_inject then
-		injectBattleMusic()
-		needs_inject = false;
-    end
 end
 
 function getFrequencyObjByValue(frequency)
@@ -282,13 +276,9 @@ function getConditionalSongTranslation(song)
         if playerInReive() then
             song = music.songs.seekers_of_adoulin.breaking_ground
         end
-        
+          
     elseif song == music.songs.others.normal then
-        if playerInParty() then
-            song = zone_bgm_table.party
-        else 
-            song = zone_bgm_table.solo
-        end
+       
     end
     
     return song 
@@ -331,6 +321,13 @@ function listTypeValid(list_type)
     return help.lists[list_type] ~= nil
 end
 
+function handleInjectionNeeds() 
+	if needs_inject then
+		injectBattleMusic()
+		needs_inject = false;
+    end
+end
+
 windower.register_event('load', function () 
     injectBattleMusic()
 end)
@@ -351,6 +348,17 @@ windower.register_event('unload', function()
     }))
 end)
 
+windower.register_event('action', function(act)
+    if act.actor_id == windower.ffxi.get_player().id then
+        if act.category == 4 and act.recast == 225 and act.targets[1].actions[1].animation == 939 then
+            if not playerInParty() then
+                displayResponse('injecting')
+                functions.loop(injectBattleMusic, 1, 5)          
+            end    
+        end
+    end
+end)
+
 windower.register_event('outgoing chunk', function(id, data)
 	if id == packets.outbound.action.id then
         local packet = _packets.parse('outgoing', data)
@@ -369,7 +377,7 @@ windower.register_event('addon command', function(command, ...)
     end
   
     local command_args = {...}
-
+ 
     local respond = false
     local response_message = ''
     local success = true
@@ -411,8 +419,9 @@ windower.register_event('addon command', function(command, ...)
         
     elseif command == 'set' or command == 's' then
         respond = true
-
+        
         local frequency = tostring(command_args[1]):lower()
+     
         local radio = tostring(command_args[2] or '*'):lower()
         
         if not frequencyValid(frequency) then
