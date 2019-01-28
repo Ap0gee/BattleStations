@@ -34,10 +34,11 @@ _addon.commands = {'battlestations', 'stations', 'bs'}
 local _logger = require('logger')
 local _config  = require('config')
 local _packets = require('packets')
-require('logger')
+
 require('functions')
 require('constants')
 require('helpers')
+require('logger')
 
 local defaults = {
     stations = {
@@ -265,7 +266,7 @@ end
 
 function getConditionalSongTranslation(song)
     local zone_bgm_table = getZoneBGMTable()
-    
+    displayResponse("before: "..song)
     if song == music.songs.others.zone then    
         if timeIsDaytime() then
             song = zone_bgm_table.day
@@ -278,9 +279,13 @@ function getConditionalSongTranslation(song)
         end
           
     elseif song == music.songs.others.normal then
-       
+        if playerInParty() then
+            song = zone_bgm_table.party
+        else 
+            song = zone_bgm_table.solo
+        end
     end
-    
+    displayResponse("before: "..after)
     return song 
 end
 
@@ -567,7 +572,10 @@ windower.register_event('addon command', function(command, ...)
 
     elseif command == 'help' or command == 'h' then
         displayHelp(help.commands)
-        
+    
+    elseif command == 'test' then
+        displayResponse(table.tostring(getZoneBGMTable()))
+            
     else
         displayHelp(help.commands)
     end
