@@ -1,5 +1,5 @@
 **Author:** [Sjshovan (Apogee)](https://github.com/Ap0gee)  
-**Version:** v0.9.0  
+**Version:** v0.9.1  
 
 
 # Battle Stations
@@ -48,7 +48,8 @@ The following aliases are available to Battle Stations commands:
 **get:** g  
 **default:** d    
 **normal:** n   
-**reload:** r    
+**reload:** r
+**about:** a
 **help:** h   
 **stations:** station | s   
 **radios:** receivers | receiver | radio | r   
@@ -158,6 +159,18 @@ Reloads the Battle Stations addon. Below are the equivalent ways of calling the 
     //battlestations r
     //stations r
     //bs r
+    
+**about**
+
+Displays information about the Battle Stations addon. Below are the equivalent ways of calling the command:
+	
+    /battlestations about
+    //stations about
+    //bs about
+    
+    //battlestations a
+    //stations a
+    //bs a
 
 ___
 ### Support
@@ -170,11 +183,20 @@ ___
 **Want to stay in the loop with my work?**
 * You can follow me at: <https://twitter.com/Sjshovan>
 
-**Want to show your love and help me make more awesome stuff?**
+**Want to toss a coin to your modder?**
 * You can do so here: <https://www.paypal.me/Sjshovan>  
 
 ___
 ### Change Log
+
+**v0.9.1** - 12/29/2019
+- **Fix:** Resolved mismatched setting type error within the `bs normal` command.
+- **Add:** New command added (about).
+- **Update:** Silent song id changed to help prevent future game updates from overriding.
+- **Update:** README Commands updated.
+- **Update:** README Aliases updated.
+- **Update:** README Known Issues updated.
+- **Update:** README TODOS updated.
 
 **v0.9.0** - 6/19/2018
 - Initial release
@@ -182,13 +204,14 @@ ___
 ___
 ### Known Issues
 
-None
+- **Issue:** During campaign battles in the past, the music switches from the campaign music to the normal zone music while stations are set to `107.3`.
 
 ___    
 ### TODOS
 
 - **TODO:** Consider providing aliases to stations to make references easier.
 - **TODO:** Consider adding categories as a list type.
+- **TODO:** Investigate methods for resolving the campaign battle music issue.
 ___
 
 ### License
