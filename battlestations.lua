@@ -27,14 +27,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ]]
 
 _addon.name     = 'Battle Stations'
+_addon.description = 'Change or remove the default battle music.'
 _addon.author   = 'Sjshovan (Apogee) sjshovan@gmail.com'
-_addon.version  = '0.9.0'
+_addon.version  = '0.9.1'
 _addon.commands = {'battlestations', 'stations', 'bs'}
 
 local _logger = require('logger')
 local _config  = require('config')
 local _packets = require('packets')
 
+require('functions')
 require('constants')
 require('helpers')
 
@@ -58,9 +60,9 @@ local help = {
         buildHelpCommandEntry('default [radio]', 'Set radio(s) to the default station (Current Zone Music).'),
         buildHelpCommandEntry('normal [radio]', 'Set radio(s) to the original game music.'),
         buildHelpCommandEntry('reload', 'Reload Battle Stations.'),
+		buildHelpCommandEntry('about', 'Display information about Battle Stations.'),
         buildHelpCommandEntry('help', 'Display Battle Stations commands.'),
         buildHelpSeperator('=', 28),
-
     },
 
     radios = {
@@ -70,6 +72,17 @@ local help = {
         buildHelpRadioEntry(stations.receivers.solo:ucfirst(), 'Plays Solo Battle Music'),
         buildHelpRadioEntry(stations.receivers.party:ucfirst(), 'Plays Party Battle Music'),
         buildHelpSeperator('=', 25),
+    },
+	
+	 about = {
+        buildHelpSeperator('=', 23),
+        buildHelpTitle('About'),
+        buildHelpSeperator('=', 23),
+        buildHelpTypeEntry('Name', _addon.name),
+        buildHelpTypeEntry('Description', _addon.description),
+        buildHelpTypeEntry('Author', _addon.author),
+        buildHelpTypeEntry('Version', _addon.version),
+        buildHelpSeperator('=', 23),
     },
     
     aliases = {
@@ -233,15 +246,8 @@ function injectBattleMusic()
     
     _packets.inject(_packets.new('incoming', packets.inbound.music_change.id, {
         ['BGM Type'] = music_type,
-        ['Song ID'] = song,
+        ['Song ID'] = song
     }))
-end
-
-function handleInjectionNeeds() 
-	if needs_inject then
-		injectBattleMusic()
-		needs_inject = false;
-    end
 end
 
 function getFrequencyObjByValue(frequency)
@@ -271,7 +277,6 @@ end
 
 function getConditionalSongTranslation(song)
     local zone_bgm_table = getZoneBGMTable()
-    
     if song == music.songs.others.zone then    
         if timeIsDaytime() then
             song = zone_bgm_table.day
@@ -282,7 +287,7 @@ function getConditionalSongTranslation(song)
         if playerInReive() then
             song = music.songs.seekers_of_adoulin.breaking_ground
         end
-        
+          
     elseif song == music.songs.others.normal then
         if playerInParty() then
             song = zone_bgm_table.party
@@ -290,7 +295,6 @@ function getConditionalSongTranslation(song)
             song = zone_bgm_table.solo
         end
     end
-    
     return song 
 end
 
@@ -331,6 +335,13 @@ function listTypeValid(list_type)
     return help.lists[list_type] ~= nil
 end
 
+function handleInjectionNeeds() 
+	if needs_inject then
+		injectBattleMusic()
+		needs_inject = false;
+    end
+end
+
 windower.register_event('load', function () 
     injectBattleMusic()
 end)
@@ -351,6 +362,16 @@ windower.register_event('unload', function()
     }))
 end)
 
+windower.register_event('action', function(act)
+    if act.actor_id == windower.ffxi.get_player().id then
+        if act.category == 4 and act.recast == 225 and act.targets[1].actions[1].animation == 939 then
+            if not playerInParty() then
+                functions.loop(injectBattleMusic, 1, 5)          
+            end    
+        end
+    end
+end)
+
 windower.register_event('outgoing chunk', function(id, data)
 	if id == packets.outbound.action.id then
         local packet = _packets.parse('outgoing', data)
@@ -369,7 +390,7 @@ windower.register_event('addon command', function(command, ...)
     end
   
     local command_args = {...}
-
+ 
     local respond = false
     local response_message = ''
     local success = true
@@ -411,8 +432,9 @@ windower.register_event('addon command', function(command, ...)
         
     elseif command == 'set' or command == 's' then
         respond = true
-
+        
         local frequency = tostring(command_args[1]):lower()
+     
         local radio = tostring(command_args[2] or '*'):lower()
         
         if not frequencyValid(frequency) then
@@ -538,7 +560,7 @@ windower.register_event('addon command', function(command, ...)
             local frequency = '107.2'
             local context = 'radio'
             
-            setStation(radio, frequency)
+            setStation(radio, tonumber(frequency))
             
             if radio == '*' then
                 context = 'radios'
@@ -555,10 +577,13 @@ windower.register_event('addon command', function(command, ...)
         
     elseif command == 'reload' or command == 'r' then
         windower.send_command('lua r battlestations')
+		
+	elseif command == 'about' or command == 'a' then
+		displayHelp(help.about)
 
     elseif command == 'help' or command == 'h' then
         displayHelp(help.commands)
-        
+             
     else
         displayHelp(help.commands)
     end

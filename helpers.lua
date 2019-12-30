@@ -37,6 +37,14 @@ function buildHelpCommandEntry(command, description)
     return entry_template:format(short_name, command, sep, description)
 end
 
+function buildHelpTypeEntry(name, description)
+	local entry_template = "%s %s %s"
+    local name = name:color(colors.secondary)
+    local sep = "=>":color(colors.primary)
+    local description = description:color(colors.info)
+    return entry_template:format(name, sep, description)
+end
+
 function buildHelpRadioEntry(name, description)
     local entry_template = "%s %s %s"
     local name = name:color(colors.secondary)

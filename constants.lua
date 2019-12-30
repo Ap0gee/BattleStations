@@ -127,7 +127,7 @@ music = {
             wail_of_the_void = 82
         },
         others = {
-            silent = 90,
+            silent = 9999,
             normal = 09,
             zone = 00
         },
