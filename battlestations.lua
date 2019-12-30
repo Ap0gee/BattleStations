@@ -39,7 +39,6 @@ local _packets = require('packets')
 require('functions')
 require('constants')
 require('helpers')
-require('logger')
 
 local defaults = {
     stations = {
