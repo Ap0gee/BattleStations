@@ -48,8 +48,8 @@ The following aliases are available to Battle Stations commands:
 **get:** g  
 **default:** d    
 **normal:** n   
-**reload:** r
-**about:** a
+**reload:** r  
+**about:** a  
 **help:** h   
 **stations:** station | s   
 **radios:** receivers | receiver | radio | r   
