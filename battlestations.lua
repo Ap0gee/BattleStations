@@ -60,7 +60,7 @@ local help = {
         buildHelpCommandEntry('default [radio]', 'Set radio(s) to the default station (Current Zone Music).'),
         buildHelpCommandEntry('normal [radio]', 'Set radio(s) to the original game music.'),
         buildHelpCommandEntry('reload', 'Reload Battle Stations.'),
-		buildHelpCommandEntry('about', 'Display information about Battle Stations.'),
+        buildHelpCommandEntry('about', 'Display information about Battle Stations.'),
         buildHelpCommandEntry('help', 'Display Battle Stations commands.'),
         buildHelpSeperator('=', 28),
     },
@@ -73,8 +73,8 @@ local help = {
         buildHelpRadioEntry(stations.receivers.party:ucfirst(), 'Plays Party Battle Music'),
         buildHelpSeperator('=', 25),
     },
-	
-	 about = {
+    
+     about = {
         buildHelpSeperator('=', 23),
         buildHelpTitle('About'),
         buildHelpSeperator('=', 23),
@@ -336,9 +336,9 @@ function listTypeValid(list_type)
 end
 
 function handleInjectionNeeds() 
-	if needs_inject then
-		injectBattleMusic()
-		needs_inject = false;
+    if needs_inject then
+        injectBattleMusic()
+        needs_inject = false;
     end
 end
 
@@ -373,7 +373,7 @@ windower.register_event('action', function(act)
 end)
 
 windower.register_event('outgoing chunk', function(id, data)
-	if id == packets.outbound.action.id then
+    if id == packets.outbound.action.id then
         local packet = _packets.parse('outgoing', data)
         if packet.Category == packets.outbound.action.categories.engage then
             injectBattleMusic()
@@ -577,9 +577,9 @@ windower.register_event('addon command', function(command, ...)
         
     elseif command == 'reload' or command == 'r' then
         windower.send_command('lua r battlestations')
-		
-	elseif command == 'about' or command == 'a' then
-		displayHelp(help.about)
+        
+    elseif command == 'about' or command == 'a' then
+        displayHelp(help.about)
 
     elseif command == 'help' or command == 'h' then
         displayHelp(help.commands)
